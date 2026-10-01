@@ -130,8 +130,16 @@ async function start() {
     await loadGuilds();
   } catch (error) {
     byId('login-screen').hidden = false;
-    byId('login-error').textContent = error.message;
-    byId('login-error').hidden = false;
+    const loginAction = byId('login-action');
+    const errorText = byId('login-error');
+    if (location.hostname.endsWith('.vercel.app') || error.message.includes('404')) {
+      loginAction.href = '?demo=1';
+      loginAction.textContent = 'Abrir demo de diseño';
+      errorText.textContent = 'Esta web está publicada como demo estática. El inicio con Discord requiere conectar y alojar el backend del bot.';
+    } else {
+      errorText.textContent = error.message;
+    }
+    errorText.hidden = false;
   }
 }
 
