@@ -1,404 +1,173 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<title>Emergency Andorra</title>
-
-<meta name="description" content="Emergency Andorra es una experiencia de roleplay seria y de alta calidad en Roblox." />
-<meta name="keywords" content="Emergency Andorra, Roblox, Roleplay, Policía, Bomberos, SEM, Andorra" />
-<meta name="author" content="Marc Productions" />
-<meta name="robots" content="index, follow" />
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="icon" type="image/png" href="andrp.webp" />
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
---ea-primary:#00aaff;
---ea-bg:#02040a;
---ea-card:#101320;
---ea-border:rgba(255,255,255,.12);
---ea-text:#ffffff;
-}
-body{
-font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Arial,sans-serif;
-background:var(--ea-bg);
-color:var(--ea-text);
-overflow-x:hidden;
-}
-
-/* LOADER */
-#loader{
-position:fixed;inset:0;
-display:flex;flex-direction:column;
-align-items:center;justify-content:center;
-background:radial-gradient(circle at 20% 0%,#04101f,#02040a 55%,#000 100%);
-z-index:9999;
-transition:opacity .6s ease,visibility .6s ease;
-}
-#loader.hidden{opacity:0;visibility:hidden}
-.loader-ring{
-width:96px;height:96px;
-border-radius:50%;
-border:3px solid rgba(0,170,255,.15);
-border-top-color:var(--ea-primary);
-border-right-color:var(--ea-primary);
-animation:spin 1s linear infinite;
-box-shadow:0 0 24px rgba(0,170,255,.6);
-}
-.loader-core{
-position:absolute;
-width:32px;height:32px;
-border-radius:50%;
-background:radial-gradient(circle,var(--ea-primary),#00111c);
-box-shadow:0 0 32px rgba(0,170,255,.9);
-}
-.loader-text{
-margin-top:18px;
-font-size:.95rem;
-letter-spacing:.12em;
-text-transform:uppercase;
-color:#cfd8ff;
-display:flex;
-align-items:center;
-gap:8px;
-}
-.loader-text span.dot{
-width:4px;height:4px;border-radius:50%;
-background:var(--ea-primary);
-animation:blink 1.4s infinite;
-}
-.loader-text span.dot:nth-child(2){animation-delay:.2s}
-.loader-text span.dot:nth-child(3){animation-delay:.4s}
-
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes blink{0%,80%,100%{opacity:0}40%{opacity:1}}
-
-/* BACKGROUND */
-.slideshow{
-position:fixed;inset:0;z-index:-2;overflow:hidden;
-}
-.slide-layer{
-position:absolute;inset:0;width:100%;height:100%;
-object-fit:cover;filter:brightness(.6) saturate(1.1);
-transform:scale(1.05);
-animation:bg-pan 26s ease-in-out infinite alternate;
-}
-@keyframes bg-pan{
-0%{transform:scale(1.05) translate3d(0,0,0)}
-100%{transform:scale(1.12) translate3d(4%,2%,0)}
-}
-.overlay{
-position:fixed;inset:0;z-index:-1;pointer-events:none;
-background:
-radial-gradient(1200px 600px at 50% 60%,rgba(0,0,0,0),rgba(0,0,0,.75) 70%),
-linear-gradient(180deg,rgba(0,0,0,.65),rgba(0,0,0,.9));
-}
-
-/* HERO */
-.hero{
-min-height:100vh;
-display:flex;flex-direction:column;
-align-items:center;justify-content:center;
-padding:24px 16px;
-text-align:center;
-}
-header{margin-bottom:10px}
-header img{
-max-height:96px;
-filter:drop-shadow(0 0 18px rgba(0,0,0,.9));
-animation:fade-down .7s ease-out;
-}
-.hero h1{
-font-size:clamp(32px,6vw,56px);
-text-shadow:0 8px 28px rgba(0,0,0,.9);
-margin-bottom:10px;
-animation:fade-up .7s ease-out .1s both;
-}
-
-/* TAGLINE */
-.tagline-row{
-display:inline-flex;align-items:center;gap:10px;
-padding:6px 14px;border-radius:999px;
-background:rgba(0,0,0,.55);
-backdrop-filter:blur(6px);
-border:1px solid rgba(255,255,255,.12);
-animation:fade-up .7s ease-out .18s both;
-}
-.tagline{
-font-size:clamp(14px,2.2vw,18px);
-text-shadow:0 4px 16px rgba(0,0,0,.85);
-}
-.dot{opacity:.75;font-weight:700}
-
-/* BUTTONS */
-.buttons{
-margin-top:16px;
-display:flex;flex-wrap:wrap;
-gap:14px;justify-content:center;
-animation:fade-up .7s ease-out .26s both;
-}
-.buttons a,.buttons button{
-border:1px solid rgba(0,170,255,.8);
-background:linear-gradient(135deg,rgba(0,0,0,.9),rgba(5,25,40,.95));
-color:#fff;
-padding:13px 22px;
-border-radius:12px;
-font-weight:600;
-font-size:.95rem;
-text-decoration:none;
-cursor:pointer;
-transition:transform .18s ease,box-shadow .18s ease,background .18s ease,border-color .18s ease;
-backdrop-filter:blur(6px);
-display:inline-flex;align-items:center;gap:8px;
-}
-.buttons a:hover,.buttons button:hover{
-background:linear-gradient(135deg,#00aaff,#4fd5ff);
-color:#000;
-transform:translateY(-1px) scale(1.02);
-box-shadow:0 0 22px rgba(0,170,255,.7);
-}
-.buttons a:active,.buttons button:active{
-transform:translateY(0) scale(.99);
-box-shadow:0 0 10px rgba(0,170,255,.4);
-}
-
-/* SOCIAL MENU */
-.social-menu{
-margin-top:14px;
-display:none;flex-direction:column;align-items:center;
-gap:10px;padding:16px;
-background:rgba(3,8,18,.9);
-border:1px solid rgba(0,170,255,.7);
-border-radius:14px;width:230px;margin-left:auto;margin-right:auto;
-animation:fade-in-scale .25s ease-out;
-}
-.social-link{
-display:flex;align-items:center;gap:10px;
-color:#fff;text-decoration:none;font-weight:500;
-font-size:.95rem;
-}
-.social-link img{width:26px;height:26px}
-.social-link:hover{color:var(--ea-primary)}
-
-/* BADGES */
-.badges{
-display:flex;justify-content:center;gap:16px;
-flex-wrap:wrap;margin-top:16px;
-animation:fade-up .7s ease-out .34s both;
-}
-.badge{
-display:flex;align-items:center;gap:10px;
-padding:8px 12px;border-radius:999px;
-background:rgba(0,0,0,.6);
-backdrop-filter:blur(6px);
-border:1px solid rgba(255,255,255,.12);
-font-size:.9rem;
-}
-
-/* SECTIONS */
-.section{
-padding:64px 18px;
-display:flex;flex-direction:column;
-align-items:center;justify-content:center;
-}
-.section-title{
-font-size:1.8rem;margin-bottom:18px;
-text-shadow:0 6px 20px rgba(0,0,0,.9);
-}
-.section-inner{
-width:100%;max-width:900px;
-background:var(--ea-card);
-border-radius:16px;
-border:1px solid var(--ea-border);
-padding:22px 20px;
-text-align:left;
-box-shadow:0 18px 40px rgba(0,0,0,.7);
-opacity:0;transform:translateY(18px);
-transition:opacity .6s ease,transform .6s ease;
-}
-.section-inner.visible{
-opacity:1;transform:translateY(0);
-}
-.section-inner p{margin-bottom:10px;font-size:.98rem;line-height:1.6}
-.section-inner ul{margin-left:18px;margin-bottom:10px}
-.section-inner li{margin-bottom:6px}
-
-/* CONTACT CARDS */
-.contact-cards{
-display:flex;flex-wrap:wrap;justify-content:center;
-gap:18px;margin-top:10px;
-}
-.card{
-flex:1 1 250px;max-width:280px;
-background:rgba(5,10,20,.95);
-border-radius:14px;
-border:1px solid var(--ea-border);
-padding:16px 14px;
-}
-.card h3{margin-bottom:8px;color:var(--ea-primary);font-size:1rem}
-.card a{color:#fff;text-decoration:underline;font-size:.9rem}
-
-/* FOOTER */
-footer{
-padding:12px 10px;
-background:rgba(0,0,0,.85);
-display:flex;flex-direction:column;
-align-items:center;gap:6px;
-font-size:.85rem;
-border-top:1px solid rgba(255,255,255,.08);
-}
-footer img{height:26px}
-
-/* ANIMATIONS */
-@keyframes fade-up{
-from{opacity:0;transform:translateY(14px)}
-to{opacity:1;transform:translateY(0)}
-}
-@keyframes fade-down{
-from{opacity:0;transform:translateY(-14px)}
-to{opacity:1;transform:translateY(0)}
-}
-@keyframes fade-in-scale{
-from{opacity:0;transform:scale(.96)}
-to{opacity:1;transform:scale(1)}
-}
-
-/* RESPONSIVE */
-@media(max-width:600px){
-.section{padding:52px 14px}
-.section-inner{padding:18px 14px}
-.tagline-row{border-radius:14px}
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101417">
+  <title>Sentra Security | Dashboard</title>
+  <link rel="stylesheet" href="/assets/dashboard.css">
+  <script src="/assets/dashboard.js" defer></script>
 </head>
-
 <body>
+  <section id="login-screen" class="login-screen" hidden>
+    <div class="login-panel">
+      <p class="eyebrow">SENTRA SECURITY</p>
+      <h1>Panel de formularios</h1>
+      <p class="muted">Inicia sesión con Discord. Solo verás los servidores donde seas owner o administrador y el bot esté conectado.</p>
+      <a class="button button-primary" href="/auth/login">Continuar con Discord</a>
+      <p id="login-error" class="error-text" hidden></p>
+    </div>
+  </section>
 
-<!-- LOADER -->
-<div id="loader">
-<div class="loader-ring"></div>
-<div class="loader-core"></div>
-<div class="loader-text">
-<span>BOOTING EA_SYSTEM</span>
-<span class="dot"></span><span class="dot"></span><span class="dot"></span>
-</div>
-</div>
+  <div id="dashboard" class="app-shell" hidden>
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="Sentra Security inicio">
+        <span class="brand-mark">S</span>
+        <span><strong>SENTRA</strong><small>SECURITY CONTROL</small></span>
+      </a>
+      <label class="field-label" for="guild-select">Servidor</label>
+      <select id="guild-select" class="control"></select>
+      <div class="sidebar-section-head">
+        <span>FORMULARIOS</span>
+        <button id="new-form" class="icon-button" type="button" title="Crear formulario" aria-label="Crear formulario">+</button>
+      </div>
+      <nav id="form-list" class="form-list" aria-label="Formularios"></nav>
+      <div class="sidebar-bottom">
+        <div id="user-summary" class="user-summary"></div>
+        <button id="logout" class="button button-quiet button-full" type="button">Cerrar sesión</button>
+      </div>
+    </aside>
 
-<!-- BACKGROUND -->
-<div class="slideshow">
-<img class="slide-layer" id="bgImage" src="bg.jpg" alt="Background" />
-</div>
-<div class="overlay"></div>
+    <main class="main-area">
+      <header class="topbar">
+        <div class="breadcrumbs"><span>Workspace</span><span>/</span><strong id="breadcrumb-form">Selecciona un formulario</strong></div>
+        <div class="topbar-actions">
+          <span id="plan-badge" class="plan-badge">PLAN</span>
+          <span id="save-status" class="save-status">Sin cambios</span>
+          <button id="download-backup" class="button button-quiet" type="button">Descargar copia</button>
+          <label class="button button-quiet restore-label" for="restore-backup-input">Restaurar copia</label>
+          <input id="restore-backup-input" type="file" accept=".zip,application/zip" hidden>
+          <button id="save-form" class="button button-secondary" type="button" disabled>Guardar</button>
+          <button id="publish-form" class="button button-primary" type="button" disabled>Publicar mensaje</button>
+        </div>
+      </header>
 
-<!-- HERO -->
-<section class="hero">
-<header>
-<img src="Andorra_Roleplay_Logo.png" alt="Emergency Andorra" />
-</header>
+      <section id="empty-state" class="empty-state">
+        <p class="eyebrow">FORM BUILDER</p>
+        <h1>Selecciona un formulario</h1>
+        <p class="muted">Crea uno nuevo o elige uno existente en la barra lateral.</p>
+      </section>
 
-<h1>Welcome to Emergency Andorra</h1>
+      <section id="editor" class="editor" hidden>
+        <div class="editor-heading">
+          <div>
+            <p class="eyebrow">CONFIGURACIÓN DEL SERVIDOR</p>
+            <h1 id="editor-title">Formulario</h1>
+          </div>
+          <button id="delete-form" class="button button-danger-quiet" type="button">Eliminar formulario</button>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Secciones del formulario">
+          <button class="tab is-active" data-tab="settings" type="button" role="tab">Formulario</button>
+          <button class="tab" data-tab="message" type="button" role="tab">Mensaje</button>
+          <button class="tab" data-tab="submissions" type="button" role="tab">Solicitudes</button>
+        </div>
 
-<div class="tagline-row">
-<span class="tagline">Your fun starts here!</span>
-<span class="dot">·</span>
-<span class="tagline">¡Tu diversión comienza aquí!</span>
-</div>
+        <section id="tab-settings" class="tab-panel is-active">
+          <div class="settings-grid">
+            <section class="work-section">
+              <div class="section-heading"><div><h2>General</h2><p>Nombre y destino de las respuestas.</p></div></div>
+              <label class="field-label" for="form-name">Nombre del formulario</label>
+              <input id="form-name" class="control" maxlength="80" autocomplete="off">
+              <label class="field-label" for="log-channel">Canal privado de logs</label>
+              <select id="log-channel" class="control"></select>
+              <label class="field-label" for="message-channel">Canal donde publicar el mensaje</label>
+              <select id="message-channel" class="control"></select>
+              <p class="field-hint">El canal de logs debe permitir acceso solo a administradores y al staff seleccionado.</p>
+            </section>
+            <section class="work-section">
+              <div class="section-heading"><div><h2>Permisos de revisión</h2><p>Los administradores siempre pueden decidir.</p></div></div>
+              <label class="field-label" for="accept-roles">Roles autorizados para aceptar</label>
+              <select id="accept-roles" class="control multi-select" multiple></select>
+              <label class="field-label" for="reject-roles">Roles autorizados para rechazar</label>
+              <select id="reject-roles" class="control multi-select" multiple></select>
+              <p class="field-hint">Sin roles seleccionados, solo los administradores pueden revisar.</p>
+            </section>
+          </div>
+          <section class="work-section questions-section">
+            <div class="section-heading">
+              <div><h2>Preguntas por mensaje directo</h2><p id="question-limit">0 preguntas</p></div>
+              <button id="add-question" class="button button-secondary" type="button">Añadir pregunta</button>
+            </div>
+            <div id="question-list" class="question-list"></div>
+          </section>
+        </section>
 
-<div class="buttons">
-<a href="#" target="_blank">Play Now</a>
-<a href="#" target="_blank">Discord</a>
-<a href="#" target="_blank">Roblox Group</a>
-<button id="socialBtn" type="button">Social Links</button>
-</div>
+        <section id="tab-message" class="tab-panel" hidden>
+          <div class="message-builder">
+            <div class="builder-column">
+              <section class="work-section message-content-section">
+                <div class="section-heading"><div><h2>Contenido</h2><p><span id="content-count">0</span> / 2000</p></div></div>
+                <div class="format-toolbar" role="toolbar" aria-label="Formato del contenido">
+                  <button type="button" data-wrap="**" title="Negrita"><strong>B</strong></button>
+                  <button type="button" data-wrap="*" title="Cursiva"><em>I</em></button>
+                  <button type="button" data-wrap="__" title="Subrayado"><u>U</u></button>
+                  <button type="button" data-wrap="~~" title="Tachado"><s>S</s></button>
+                </div>
+                <textarea id="message-content" class="control message-textarea" maxlength="2000" placeholder="Escribe el contenido del mensaje..."></textarea>
+              </section>
 
+              <section class="work-section">
+                <div class="section-heading"><div><h2>Attachments</h2><p><span id="attachment-count">0</span> / 10 · <span id="attachment-size">0 MB</span> / 24.5 MB</p></div></div>
+                <div id="attachment-list" class="attachment-list"></div>
+                <label class="upload-button button button-secondary" for="attachment-input">Add Attachment</label>
+                <input id="attachment-input" type="file" multiple hidden>
+                <button id="clear-attachments" class="button button-quiet" type="button">Clear Attachments</button>
+                <p class="field-hint">Los archivos se adjuntan cuando publiques. No aparecerán en la previsualización local.</p>
+              </section>
 
+              <section class="work-section embeds-section">
+                <div class="section-heading"><div><h2>Embeds</h2><p><span id="embed-count">0</span> / 10 · <span id="embed-text-count">0</span> / 6000 characters</p></div><button id="add-embed" class="button button-secondary" type="button">Add Embed</button></div>
+                <div id="embed-editors" class="embed-editors"></div>
+                <button id="clear-embeds" class="button button-quiet" type="button">Clear Embeds</button>
+              </section>
 
-<!-- DEVELOPERS -->
-<section class="section" id="developers">
-<h2 class="section-title">Buscamos Developers</h2>
-<div class="section-inner">
-<p>
-Estamos formando un equipo de desarrollo para <strong>Emergency Andorra</strong>, un proyecto serio, estable y de larga duración en Roblox.
-</p>
-<p>Buscamos personas con experiencia en:</p>
-<ul>
-<li>Scripting (Lua / Roblox Studio)</li>
-<li>Modelado 3D</li>
-<li>Building / Map Design</li>
-<li>UI/UX Design</li>
-<li>Animación</li>
-<li>Optimización y sistemas avanzados</li>
-</ul>
-<p>
-Actualmente el proyecto es <strong>no remunerado</strong>.  
-Cuando el juego genere ingresos (estimado en unos 3 años), la compensación mensual será variable según la aportación:
-</p>
-<ul>
-<li><strong>+700 Robux/mes</strong> para los miembros más activos</li>
-<li><strong>400 Robux/mes</strong> para aportaciones menores</li>
-</ul>
-<p>
-Si quieres unirte o saber más, envía un MD a: <strong>MarcOficial23</strong>.
-</p>
-</div>
-</section>
+              <details class="work-section components-section">
+                <summary><span><strong>Components</strong><small><span id="component-count">0</span> / 5 · ADVANCED</small></span><span class="summary-arrow">+</span></summary>
+                <div class="components-body">
+                  <div id="component-editors" class="component-editors"></div>
+                  <button id="add-component" class="button button-secondary" type="button">Add Component</button>
+                  <button id="clear-components" class="button button-quiet" type="button">Clear Components</button>
+                </div>
+              </details>
+            </div>
+            <aside class="preview-column">
+              <div class="preview-sticky">
+                <div class="preview-title"><span>PREVIEW</span><span id="preview-channel"># canal</span></div>
+                <div class="discord-preview">
+                  <div class="bot-avatar">S</div>
+                  <div class="preview-message">
+                    <div class="preview-author"><strong>Sentra Security</strong><span>APP</span><time>ahora</time></div>
+                    <div id="preview-content" class="preview-content"></div>
+                    <div id="preview-embeds" class="preview-embeds"></div>
+                    <div id="preview-components" class="preview-components"></div>
+                    <div id="preview-attachments" class="preview-attachments"></div>
+                  </div>
+                </div>
+                <button id="preview-refresh" class="button button-quiet" type="button">Actualizar vista previa</button>
+              </div>
+            </aside>
+          </div>
+        </section>
 
-<!-- CONTACTO -->
-<section class="section" id="contact">
-<h2 class="section-title">Contacto</h2>
-<div class="section-inner">
-<div class="contact-cards">
-<div class="card">
-<h3>Soporte General</h3>
-<a href="mailto:contact@emergencyvalladolid.com">contact@emergencyvalladolid.com</a>
-</div>
-<div class="card">
-<h3>Negocios</h3>
-<a href="mailto:business@emergencyvalladolid.com">business@emergencyvalladolid.com</a>
-</div>
-<div class="card">
-<h3>Legal & Copyright</h3>
-<a href="mailto:copyright@emergencyvalladolid.com">copyright@emergencyvalladolid.com</a>
-</div>
-</div>
-</div>
-</section>
-
-<footer>
-<img src="VairosProductions_Logo.png" alt="Vairos Productions" />
-<span>Marc Productions © 2026 — All rights reserved</span>
-</footer>
-
-<script>
-// Loader
-window.addEventListener("load", () => {
-setTimeout(() => {
-document.getElementById("loader").classList.add("hidden");
-}, 1200);
-});
-
-// Social menu
-document.getElementById("socialBtn").addEventListener("click", () => {
-const menu = document.getElementById("socialMenu");
-menu.style.display = menu.style.display === "flex" ? "none" : "flex";
-});
-
-// Scroll reveal sections
-const observer = new IntersectionObserver(
-(entries) => {
-entries.forEach(entry => {
-if(entry.isIntersecting){
-entry.target.classList.add("visible");
-observer.unobserve(entry.target);
-}
-});
-},{threshold:0.18}
-);
-document.querySelectorAll(".section-inner").forEach(el => observer.observe(el));
-</script>
-
+        <section id="tab-submissions" class="tab-panel" hidden>
+          <section class="work-section">
+            <div class="section-heading"><div><h2>Solicitudes</h2><p>Historial de respuestas y decisiones de staff.</p></div><button id="refresh-submissions" class="button button-secondary" type="button">Actualizar</button></div>
+            <div id="submission-list" class="submission-list"></div>
+          </section>
+        </section>
+      </section>
+      <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    </main>
+  </div>
 </body>
 </html>
-
