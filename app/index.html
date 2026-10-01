@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101417">
+  <title>Sentra Security | Dashboard</title>
+  <link rel="stylesheet" href="/dashboard.css">
+  <script src="/dashboard.js" defer></script>
+</head>
+<body>
+  <section id="login-screen" class="login-screen" hidden>
+    <div class="login-panel">
+      <p class="eyebrow">SENTRA SECURITY</p>
+      <h1>Panel de formularios</h1>
+      <p class="muted">Inicia sesión con Discord. Solo verás los servidores donde seas owner o administrador y el bot esté conectado.</p>
+      <a class="button button-primary" href="/auth/login">Continuar con Discord</a>
+      <p id="login-error" class="error-text" hidden></p>
+    </div>
+  </section>
+
+  <div id="dashboard" class="app-shell" hidden>
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="Sentra Security inicio">
+        <span class="brand-mark">S</span>
+        <span><strong>SENTRA</strong><small>SECURITY CONTROL</small></span>
+      </a>
+      <label class="field-label" for="guild-select">Servidor</label>
+      <select id="guild-select" class="control"></select>
+      <div class="sidebar-section-head">
+        <span>FORMULARIOS</span>
+        <button id="new-form" class="icon-button" type="button" title="Crear formulario" aria-label="Crear formulario">+</button>
+      </div>
+      <nav id="form-list" class="form-list" aria-label="Formularios"></nav>
+      <div class="sidebar-bottom">
+        <div id="user-summary" class="user-summary"></div>
+        <button id="logout" class="button button-quiet button-full" type="button">Cerrar sesión</button>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="breadcrumbs"><span>Workspace</span><span>/</span><strong id="breadcrumb-form">Selecciona un formulario</strong></div>
+        <div class="topbar-actions">
+          <span id="demo-badge" class="demo-badge" hidden>DEMO · NO GUARDA EN DISCORD</span>
+          <span id="plan-badge" class="plan-badge">PLAN</span>
+          <span id="save-status" class="save-status">Sin cambios</span>
+          <button id="download-backup" class="button button-quiet" type="button">Descargar copia</button>
+          <label class="button button-quiet restore-label" for="restore-backup-input">Restaurar copia</label>
+          <input id="restore-backup-input" type="file" accept=".zip,application/zip" hidden>
+          <button id="save-form" class="button button-secondary" type="button" disabled>Guardar</button>
+          <button id="publish-form" class="button button-primary" type="button" disabled>Publicar mensaje</button>
+        </div>
+      </header>
+
+      <section id="empty-state" class="empty-state">
+        <p class="eyebrow">FORM BUILDER</p>
+        <h1>Selecciona un formulario</h1>
+        <p class="muted">Crea uno nuevo o elige uno existente en la barra lateral.</p>
+      </section>
+
+      <section id="editor" class="editor" hidden>
+        <div class="editor-heading">
+          <div>
+            <p class="eyebrow">CONFIGURACIÓN DEL SERVIDOR</p>
+            <h1 id="editor-title">Formulario</h1>
+          </div>
+          <button id="delete-form" class="button button-danger-quiet" type="button">Eliminar formulario</button>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Secciones del formulario">
+          <button class="tab is-active" data-tab="settings" type="button" role="tab">Formulario</button>
+          <button class="tab" data-tab="message" type="button" role="tab">Mensaje</button>
+          <button class="tab" data-tab="submissions" type="button" role="tab">Solicitudes</button>
+        </div>
+
+        <section id="tab-settings" class="tab-panel is-active">
+          <div class="settings-grid">
+            <section class="work-section">
+              <div class="section-heading"><div><h2>General</h2><p>Nombre y destino de las respuestas.</p></div></div>
+              <label class="field-label" for="form-name">Nombre del formulario</label>
+              <input id="form-name" class="control" maxlength="80" autocomplete="off">
+              <label class="field-label" for="log-channel">Canal privado de logs</label>
+              <select id="log-channel" class="control"></select>
+              <label class="field-label" for="message-channel">Canal donde publicar el mensaje</label>
+              <select id="message-channel" class="control"></select>
+              <p class="field-hint">El canal de logs debe permitir acceso solo a administradores y al staff seleccionado.</p>
+            </section>
+            <section class="work-section">
+              <div class="section-heading"><div><h2>Permisos de revisión</h2><p>Los administradores siempre pueden decidir.</p></div></div>
+              <label class="field-label" for="accept-roles">Roles autorizados para aceptar</label>
+              <select id="accept-roles" class="control multi-select" multiple></select>
+              <label class="field-label" for="reject-roles">Roles autorizados para rechazar</label>
+              <select id="reject-roles" class="control multi-select" multiple></select>
+              <p class="field-hint">Sin roles seleccionados, solo los administradores pueden revisar.</p>
+            </section>
+          </div>
+          <section class="work-section questions-section">
+            <div class="section-heading">
+              <div><h2>Preguntas por mensaje directo</h2><p id="question-limit">0 preguntas</p></div>
+              <button id="add-question" class="button button-secondary" type="button">Añadir pregunta</button>
+            </div>
+            <div id="question-list" class="question-list"></div>
+          </section>
+        </section>
+
+        <section id="tab-message" class="tab-panel" hidden>
+          <div class="message-builder">
+            <div class="builder-column">
+              <section class="work-section message-content-section">
+                <div class="section-heading"><div><h2>Contenido</h2><p><span id="content-count">0</span> / 2000</p></div></div>
+                <div class="format-toolbar" role="toolbar" aria-label="Formato del contenido">
+                  <button type="button" data-wrap="**" title="Negrita"><strong>B</strong></button>
+                  <button type="button" data-wrap="*" title="Cursiva"><em>I</em></button>
+                  <button type="button" data-wrap="__" title="Subrayado"><u>U</u></button>
+                  <button type="button" data-wrap="~~" title="Tachado"><s>S</s></button>
+                </div>
+                <textarea id="message-content" class="control message-textarea" maxlength="2000" placeholder="Escribe el contenido del mensaje..."></textarea>
+              </section>
+
+              <section class="work-section">
+                <div class="section-heading"><div><h2>Attachments</h2><p><span id="attachment-count">0</span> / 10 · <span id="attachment-size">0 MB</span> / 24.5 MB</p></div></div>
+                <div id="attachment-list" class="attachment-list"></div>
+                <label class="upload-button button button-secondary" for="attachment-input">Add Attachment</label>
+                <input id="attachment-input" type="file" multiple hidden>
+                <button id="clear-attachments" class="button button-quiet" type="button">Clear Attachments</button>
+                <p class="field-hint">Los archivos se adjuntan cuando publiques. No aparecerán en la previsualización local.</p>
+              </section>
+
+              <section class="work-section embeds-section">
+                <div class="section-heading"><div><h2>Embeds</h2><p><span id="embed-count">0</span> / 10 · <span id="embed-text-count">0</span> / 6000 characters</p></div><button id="add-embed" class="button button-secondary" type="button">Add Embed</button></div>
+                <div id="embed-editors" class="embed-editors"></div>
+                <button id="clear-embeds" class="button button-quiet" type="button">Clear Embeds</button>
+              </section>
+
+              <details class="work-section components-section">
+                <summary><span><strong>Components</strong><small><span id="component-count">0</span> / 5 · ADVANCED</small></span><span class="summary-arrow">+</span></summary>
+                <div class="components-body">
+                  <div id="component-editors" class="component-editors"></div>
+                  <button id="add-component" class="button button-secondary" type="button">Add Component</button>
+                  <button id="clear-components" class="button button-quiet" type="button">Clear Components</button>
+                </div>
+              </details>
+            </div>
+            <aside class="preview-column">
+              <div class="preview-sticky">
+                <div class="preview-title"><span>PREVIEW</span><span id="preview-channel"># canal</span></div>
+                <div class="discord-preview">
+                  <div class="bot-avatar">S</div>
+                  <div class="preview-message">
+                    <div class="preview-author"><strong>Sentra Security</strong><span>APP</span><time>ahora</time></div>
+                    <div id="preview-content" class="preview-content"></div>
+                    <div id="preview-embeds" class="preview-embeds"></div>
+                    <div id="preview-components" class="preview-components"></div>
+                    <div id="preview-attachments" class="preview-attachments"></div>
+                  </div>
+                </div>
+                <button id="preview-refresh" class="button button-quiet" type="button">Actualizar vista previa</button>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="tab-submissions" class="tab-panel" hidden>
+          <section class="work-section">
+            <div class="section-heading"><div><h2>Solicitudes</h2><p>Historial de respuestas y decisiones de staff.</p></div><button id="refresh-submissions" class="button button-secondary" type="button">Actualizar</button></div>
+            <div id="submission-list" class="submission-list"></div>
+          </section>
+        </section>
+      </section>
+      <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    </main>
+  </div>
+</body>
+</html>
